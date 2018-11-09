@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
+    <title>demo</title>
+    <script src="http://g.alicdn.com/dingding/dingtalk-jsapi/2.0.72/dingtalk.open.js"></script>
+    <!-- 推荐查阅的钉钉移动端开发文档： https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.3e764a97AKNugb&treeId=171&articleId=104906&docType=1 -->
+    <!-- 调用此页面方法，保证在后台管理工作台已有应用中设置后在手机钉钉查看 -->
+    <!-- 1.引入钉钉线上js文档时，确保版本与钉钉开发文档一直，最好使用最新版本 -->
+    <!-- 2.钉钉内置浏览器版本js_es6以上的大部分语法不支持，需保证js语法降级，css不支持0.5px的显示 -->
+    <!-- 3.每次调用钉钉方法建议放在 dd.ready 内， dd.error配合使用，dd.error等同于promise的catch回调-->
+    <!-- 建议：版本更新需要在后台工作台设置对应OA应用设置首页地址更改版本hash值
+    （原因更新后部分手机打开会是空白页，考虑是钉钉对历史设置地址具有缓存问题）
+    -->
+    <style>
+        body{
+            font-size: 16px;
+        }
+        div{padding:6px 0;}
+    </style>
+</head>
+<body>
+    <div>
+        目前使用者工号： <h1 class="userCode"></h1>
+    </div>
+    <div>
+        <button class="seletMan" onclick="selectMans()">选择单人员工</button>
+    </div>
+    <div>
+        <button class="seletMans" onclick="selectMans(true)">选择多人员工</button>
+    </div>
+    <script type="text/javascript">
+        /*
+         * 功能：钉钉jsapi部分方法demo
+         * 作者：ztrain
+         * 日期：2018-9-25
+         * */
+        /* 设置导航栏颜色
+        在url后面拼接dd_nav_bgcolor参数即可，即在管理工作台应用的首页地址中设置的url（进入页面也可设置导航条背景色，但是该方法更改速度快捷）
+        如下：支持的格式:“AARRGGBB”
+        http://abc.xyz?dd_nav_bgcolor=FF55A1F9 */
+
+        // 设置钉钉头部导航栏标题
+        function ddSetTitle (title) {
+            // 如开发使用vue，头部组件仍可调用，可高度为0不显示，每次进入离开组件根据传入titleName再重写头部名字
+          dd.ready(function() {
+            dd.biz.navigation.setTitle({
+              title : title,//控制标题文本，空字符串表示显示默认文本
+              onSuccess : function(result) {
+                // alert(JSON.stringify(result))
+              },
+              onFail : function(err) {alert(JSON.stringify(err))}
+            });
+          })
+          dd.error(function(err) {
+            alert('dd error: ' + JSON.stringify(err));
+          });
+        }
+
+        // 清除导航左侧按钮，即不显示
+        function clear_dd_Right (){
+          dd.ready(function() {
+            dd.biz.navigation.setRight({
+              show: false,//控制按钮显示， true 显示， false 隐藏， 默认true
+              control: false,//是否控制点击事件，true 控制，false 不控制， 默认false
+              text: '',//控制显示文本，空字符串表示显示默认文本
+              onSuccess : function(result) {
+              },
+              onFail : function(err) {}
+            });
+          })
+          dd.error(function(err) {
+            // alert('dd error: ' + JSON.stringify(err));
+          });
+        }
+
+        // 清除容器导航栏
+        function dd_hideBar () {
+            dd.biz.navigation.hideBar({
+                hidden: true,  // true：隐藏，false：显示
+                onSuccess : function(result) {
+                },
+                onFail : function(err) {}
+            })
+        }
+
+        //选择获取公司人员
+        function selectMans(more) {
+            more = !!more;
+            dd.ready(function(){
+                dd.biz.contact.complexPicker({
+                    title:"选择员工",            //标题
+                    corpId: baseData.corpId,        //企业的corpId
+                    multiple:more,            //是否多选
+                    limitTips:"超出最大可选值",          //超过限定人数返回提示
+                    maxUsers:100,            //最大可选人数
+                    pickedUsers: [],            //已选用户 *** 此处写入已选人员的工号数组，即你需要把每次选取的人员工号存放好
+                    appId: baseData.appId,              //微应用的Id
+                    responseUserOnly:true,        //返回人，或者返回人和部门，true默认返回人员
+                    startWithDepartmentId:0 ,   // 0表示从企业最上层开始
+                    onSuccess: function(result) {
+                        result.users.forEach(function(item){
+                            item.name = item.name.replace(/[\(|（](.+?)[\)|）]/, ''); // 处理清除搜索得到的人员，人名加上了括号内容
+                        })
+                        alert(JSON.stringify(result));
+                    },
+                    onFail : function(err) {
+                        alert(JSON.stringify(err));
+                    }
+                });
+            });
+            dd.error(function(err) {
+                alert('dd error: ' + JSON.stringify(err));
+            });
+        }
+
+        // 获取jsapi鉴权结果，服务器已调用两次钉钉接口得到鉴权信息，鉴权签名与信息在客户端再进行config
+        function getJsToken () {
+            var prams_url = location.href.replace(/\#.+?/, '');
+            loadXMLDoc("/getJsToken?url=" + prams_url + '&appid=' + baseData.appId,function(data){
+                // signature: '', 必填，生成的加密签名
+                // var plainTex = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + timeStamp + "&url=" + url
+                // CryptoJS.SHA1(plainTex).toString()  服务器中加密生成signature，其中当前页面的url必须保证带上  '/'且不需要#后面的数据,dd.config的加密比对会自动把当前应用的url 加上 '/'
+
+                // 设置dd.config， 添加jsApiList
+                let json = JSON.parse(data)
+                baseData.corpId = json.corpId;
+                json.jsApiList = [
+                    'biz.user.get',
+                    'device.geolocation.get',
+                    'biz.contact.complexPicker',
+                    'biz.util.uploadImage',
+                    'biz.user.get'
+                ];
+                dd.config(json);
+                dd.error(function(err) {
+                  alert('dd error: ' + JSON.stringify(err));
+                });
+            })
+        }
+
+        function saveFile (item, isOpen) { // url 记住外网访问地址，如需单点登录，可在地址使用单点地址进行跳转
+            dd.ready(() => {
+              if (isOpen === 'previewImage') {
+                dd.biz.util.previewImage({ // 图片预览
+                  urls: ['url'],//图片地址列表
+                  current: item.FILENAME,//当前显示的图片链接
+                  onSuccess : function(result) {
+                      /**/
+                  },
+                  onFail : function(err) {}
+                })
+              } else {
+                dd.biz.cspace.saveFile({ // 上传钉盘，网页地址类的上传仅可支持1330kb以下大小的文件
+                  corpId: baseData.corpId,
+                    url: 'url',  // 文件在第三方服务器地址， 也可为通过服务端接口上传文件得到的media_id，详见参数说明
+                    name: item.FILENAME,
+                    onSuccess: res => {
+                    item.openObj = {
+                      spaceId:res.data[0].spaceId,
+                      fileId:res.data[0].fileId,
+                      fileName:res.data[0].fileName,
+                      fileSize:res.data[0].fileSize,
+                      fileType:res.data[0].fileType
+                    }
+                    if (isOpen) {
+                      this.cspacePreview(item.openObj)
+                    }
+                  },
+                  onFail: err =>{
+                    dd.alert(JSON.stringify(err))
+                  }
+                })
+              }
+            })
+        }
+
+        function cspacePreview (o) { // 预览对应id的钉盘文件
+            dd.biz.cspace.preview({
+                corpId: baseData.corpId,
+                spaceId:o.spaceId,
+                fileId:o.fileId,
+                fileName:o.fileName,
+                fileSize:o.fileSize,
+                fileType:o.fileType,
+                onSuccess: function() {
+                    //无，直接在native显示文件详细信息
+                },
+                onFail: function(err) {
+                  if (err) {
+                    alert('该文件类型不支持预览')
+                  }
+                    // 无，直接在native页面显示具体的错误
+                }
+            });
+        }
+
+        // 设置基础复用数据
+        var baseData = {
+            appId: '192255647', // 微应用的Id ,在钉钉的后台管理 工作台的应用设置可查到
+            corpId: ''//企业的corpId
+        };
+
+        //原生ajax请求函数
+        function loadXMLDoc(url,fun){
+            var xmlhttp;
+            if (window.XMLHttpRequest)    {
+                xmlhttp=new XMLHttpRequest();
+            }    else    {
+                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange=function() {
+                if (xmlhttp.readyState==4 && xmlhttp.status==200)     {
+                    fun(xmlhttp.responseText);
+                }
+            }
+            xmlhttp.open("GET",url,true);
+            xmlhttp.send();
+        }
+
+        window.onload = function () {
+            getJsToken();
+            // ddSetTitle('钉钉jsapi使用DEMO');
+            // clear_dd_Right();
+        }
+    </script>
+</body>
+</html>
