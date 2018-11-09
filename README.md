@@ -23,7 +23,7 @@ node sever.js 本地服务，打开http://localhost:8080/dingding_demo.html，
 getJsToken获取jsapi鉴权结果，服务器已调用两次钉钉接口得到鉴权信息，鉴权签名与信息在客户端再进行config，
 其中当前页面的url必须保证带上  '/'且不需要#后面的数据,dd.config的加密比对会自动把当前应用的url 加上 '/'
 ```
-
+###node.js 鉴权部分
 ```node.js
 	let corpid = ''; // 企业钉钉ID
 	let corpsecret = ''; // // 企业钉钉密钥
@@ -45,7 +45,7 @@ getJsToken获取jsapi鉴权结果，服务器已调用两次钉钉接口得到�
 	    }
 	}
 ```
-
+### html调用/getJsToken接口，进行dd.config
 ```javascript
 	function getJsToken () {
 	    var prams_url = location.href.replace(/\#.+?/, '');
