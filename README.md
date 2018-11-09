@@ -16,7 +16,7 @@
 -4 saveFile    previewImage图片预览，saveFile钉盘上传
 -5 cspacePreview    预览对应id的钉盘文件
 -6 selectMans     通讯录人员选择
-
+```
 ##jsapi鉴权
 ```
 node sever.js 本地服务，打开http://localhost:8080/dingding_demo.html，
