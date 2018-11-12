@@ -29,51 +29,51 @@ getJsToken获取jsapi鉴权结果，服务器已调用两次钉钉接口得到�
 
 ### node.js 鉴权部分
 ```node.js
-	let corpid = ''; // 企业钉钉ID
-	let corpsecret = ''; // // 企业钉钉密钥
-	//获取Token　后端实现
-	async function getJsToken(url, agentId){
-	    let access_token = await getHttps(`https://oapi.dingtalk.com/gettoken?corpid=${corpid}&corpsecret=${corpsecret}`);
-	    let ticket = await  getHttps('https://oapi.dingtalk.com/get_jsapi_ticket?access_token='+access_token.access_token);
+let corpid = '';  // 企业钉钉ID
+let corpsecret = '';  // 企业钉钉密钥
+//获取Token　后端实现
+async function getJsToken(url, agentId){
+    let access_token = await getHttps(`https://oapi.dingtalk.com/gettoken?corpid=${corpid}&corpsecret=${corpsecret}`);
+    let ticket = await  getHttps('https://oapi.dingtalk.com/get_jsapi_ticket?access_token='+access_token.access_token);
 
-	    let nonceStr = Math.random().toString(32).slice(-6)
-	    let timeStamp = Date.now();
-	    let plainTex = "jsapi_ticket=" + ticket.ticket + "&noncestr=" + nonceStr + "&timestamp=" + timeStamp + "&url=" + url
-	    let signature = CryptoJS.SHA1(plainTex).toString()
-	    return {
-	        agentId: agentId, // agentId 应用ip  工作台内可查看
-	        corpId: corpid, //必填，企业ID
-	        timeStamp, // 必填，生成签名的时间戳
-	        nonceStr, // 必填，生成签名的随机串
-	        signature, // 必填，签名
-	    }
-	}
+    let nonceStr = Math.random().toString(32).slice(-6)
+    let timeStamp = Date.now();
+    let plainTex = "jsapi_ticket=" + ticket.ticket + "&noncestr=" + nonceStr + "&timestamp=" + timeStamp + "&url=" + url
+    let signature = CryptoJS.SHA1(plainTex).toString()
+    return {
+	agentId: agentId, // agentId 应用ip  工作台内可查看
+	corpId: corpid, //必填，企业ID
+	timeStamp, // 必填，生成签名的时间戳
+	nonceStr, // 必填，生成签名的随机串
+	signature, // 必填，签名
+    }
+}
 ```
 
 ### html调用/getJsToken接口，进行dd.config
 ```javascript
-	function getJsToken () {
-	    var prams_url = location.href.replace(/\#.+?/, '');
-	    loadXMLDoc("/getJsToken?url=" + prams_url + '&appid=' + baseData.appId,function(data){
-	        // signature: '', 必填，生成的加密签名
-	        // var plainTex = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + timeStamp + "&url=" + url
-	        // CryptoJS.SHA1(plainTex).toString()  服务器中加密生成signature，
+function getJsToken () {
+    var prams_url = location.href.replace(/\#.+?/, '');
+    loadXMLDoc("/getJsToken?url=" + prams_url + '&appid=' + baseData.appId,function(data){
+	// signature: '', 必填，生成的加密签名
+	// var plainTex = "jsapi_ticket=" + ticket + "&noncestr=" + nonceStr + "&timestamp=" + timeStamp + "&url=" + url
+	// CryptoJS.SHA1(plainTex).toString()  服务器中加密生成signature，
 
-	        // 设置dd.config， 添加jsApiList
-	        data = JSON.parse(data)
-	        let json = data.config;
-	        baseData.corpId = json.corpId;
-	        json.jsApiList = [ // 写入使用并需要鉴权的api名字
-	            'biz.user.get',
-	            'device.geolocation.get',
-	            'biz.contact.complexPicker',
-	            'biz.util.uploadImage',
-	            'biz.user.get'
-	        ];
-	        dd.config(json);
-	        dd.error(function(err) {
-	          alert('dd error: ' + JSON.stringify(err));
-	        });
-	    })
-	}
+	// 设置dd.config， 添加jsApiList
+	data = JSON.parse(data)
+	let json = data.config;
+	baseData.corpId = json.corpId;
+	json.jsApiList = [ // 写入使用并需要鉴权的api名字
+	    'biz.user.get',
+	    'device.geolocation.get',
+	    'biz.contact.complexPicker',
+	    'biz.util.uploadImage',
+	    'biz.user.get'
+	];
+	dd.config(json);
+	dd.error(function(err) {
+	  alert('dd error: ' + JSON.stringify(err));
+	});
+    })
+}
 ```
