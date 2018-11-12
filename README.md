@@ -13,12 +13,12 @@
 ## 页面对应方法
 | 页面方法 | jsapi方法 | 名字 | 说明
 |:--------:|:---------:|:--------:|:-------:|
-| ddSetTitle    | biz.navigation.setTitle | 设置钉钉头部导航栏标题 |
 | clear_dd_Right| biz.navigation.setRight | 清除导航左侧按钮 | 完全隐藏可以在应用设置地址栏设置showmenu=false
 | dd_hideBar    | biz.navigation.hideBar | 清除容器导航栏 | 该方法对于单页面应用首次进入调用即可，多页面应用则需要每个页面进入都需调用一遍，原因是安卓浏览器容器不兼容
 | saveFile      | biz.cspace.saveFile、biz.util.previewImage | previewImage图片预览，saveFile钉盘上传|上传钉盘，网页地址类的上传仅可支持1330kb以下大小的文件
 | cspacePreview | biz.cspace.preview | 预览钉盘文件 | 预览对应id的钉盘文件
 | selectMans    | biz.contact.complexPicker | 通讯录人员选择 | 搜索后返回的名字会加上（名字）
+| ddSetTitle    | biz.navigation.setTitle | 设置钉钉头部导航栏标题 |
 
 ## jsapi鉴权
 ```
