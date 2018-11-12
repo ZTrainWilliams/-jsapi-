@@ -9,16 +9,16 @@
 5. 每次调用钉钉方法建议放在 dd.ready 内， dd.error配合使用，dd.error等同于promise的catch回调
 6. 建议：版本更新需要在后台工作台设置对应OA应用设置首页地址更改版本hash值
   （原因更新后部分手机打开会是空白页，考虑是钉钉对历史设置地址具有缓存问题）
-
-
-## 方法
-1. ddSetTitle    设置钉钉头部导航栏标题
-2. clear_dd_Right     清除导航左侧按钮
-3. dd_hideBar     清除容器导航栏    该方法对于单页面应用首次进入调用即可，多页面应用则需要每个页面进入都需调用一遍，原因是安卓浏览器容器不兼容
-4. saveFile    previewImage图片预览，saveFile钉盘上传
-5. cspacePreview    预览对应id的钉盘文件
-6. selectMans     通讯录人员选择
 ```
+## 页面对应方法
+| 页面方法 | jsapi方法 | 名字 | 说明
+|:--------:|:---------:|:--------:|:-------:|
+| ddSetTitle    | biz.navigation.setTitle | 设置钉钉头部导航栏标题 |
+| clear_dd_Right| biz.navigation.setRight | 清除导航左侧按钮 | 完全隐藏可以在应用设置地址栏设置showmenu=false
+| dd_hideBar    | biz.navigation.hideBar | 清除容器导航栏 | 该方法对于单页面应用首次进入调用即可，多页面应用则需要每个页面进入都需调用一遍，原因是安卓浏览器容器不兼容
+| saveFile      | biz.cspace.saveFile、biz.util.previewImage | previewImage图片预览，saveFile钉盘上传|上传钉盘，网页地址类的上传仅可支持1330kb以下大小的文件
+| cspacePreview | biz.cspace.preview | 预览钉盘文件 | 预览对应id的钉盘文件
+| selectMans    | biz.contact.complexPicker | 通讯录人员选择 | 搜索后返回的名字会加上（名字）
 
 ## jsapi鉴权
 ```
