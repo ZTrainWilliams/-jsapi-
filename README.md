@@ -1,8 +1,10 @@
 # 钉钉jsapi使用案例
 ```
-对钉钉的H5开发，钉钉提供了一些原生能力的jsapi方法，通过api调用是手机的基础能力或容器的功能，部分api的调用不需要进行鉴权（即不需要进行dd.config）。
+对钉钉的H5开发，钉钉提供了一些原生能力的jsapi方法，通过api调用是手机的基础能力或容器的功能，
+  部分api的调用不需要进行鉴权（即不需要进行dd.config）。
 1. 推荐查阅的钉钉移动端开发文档：
-  https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.3e764a97AKNugb&treeId=171&articleId=104906&docType=1
+  https://open-doc.dingtalk.com/docs/doc.htm?
+  spm=a219a.7629140.0.0.3e764a97AKNugb&treeId=171&articleId=104906&docType=1
 2. 需鉴权spi方法的调用此页面，保证在后台管理工作台已有应用中设置后在手机钉钉查看
 3. 引入钉钉线上js文档时，确保版本与钉钉开发文档一直，最好使用最新版本
 4. 钉钉内置浏览器版本js_es6以上的大部分语法不支持，需保证js语法降级，css不支持0.5px的显示
